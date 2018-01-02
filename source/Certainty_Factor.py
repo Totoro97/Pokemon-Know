@@ -4,6 +4,8 @@ w2cf = {
 	"mayb": 0.4
 }
 
+base = 100
+
 def mix(a, b) :
 	if a > 0.0 and b > 0.0 :
 		return a + b - a * b

@@ -7,7 +7,8 @@ class Pokemon :
 	def __init__(self, name) :
 		self.load_data(name)
 		self.p = 0.0
-		
+		self.cnt = 0
+				
 	def load_data(self, name) :
 		f = open('../data/' + name + '.json', 'r')
 		raw_data = json.loads(f.read())
@@ -25,6 +26,8 @@ class Pokemon :
 			sing = raw_data['继承']
 			for val in sing :
 				self.update_inh(val, sing[val])
+		
+		self.ave_it()
 	
 	def update_inh(self, name, p) :
 		url = '../data/' + name + '.json'
@@ -43,9 +46,19 @@ class Pokemon :
 					self.data[attr][val] = cf.mix(0.0, raw_data[attr][val])
 				else :
 					self.data[attr][val] = cf.mix(self.data[attr][val], raw_data[attr][val])
-		 
+	
+	def ave_it(self) :
+		for attr in self.data :
+			for val in self.data[attr] :
+				self.data[attr][val] /= len(self.data[attr])
+				
 	def new_p(self, attr, val, mark) :
 		p = self.belong_val(attr, val)
+		if not mark :
+			if p < 0 :
+				p *= -0.5
+			else :
+				p = max(-0.9, p * (-1.5))
 		#if val == '拉达' and mark:
 		#	print(str(p) + '+' + str(list(self.data['名字'])[0]))
 		return cf.mix(self.p, p)
@@ -55,7 +68,7 @@ class Pokemon :
 		if attr not in self.data :
 			p = -0.4
 		elif val not in self.data[attr] :
-			p = -0.6
+			p = -0.8
 		else :
 			p = self.data[attr][val]
 		return p

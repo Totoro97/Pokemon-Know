@@ -14,3 +14,9 @@ def mix(a, b) :
 	else :
 		return a + b + a * b
 
+def get_ratio(token) :
+	if (token == 'mayb') :
+		return 0.7
+	elif (token == 'unknown') :
+		return 0.0
+	return 1.0

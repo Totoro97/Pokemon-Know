@@ -21,7 +21,7 @@ class Message_Frame(QWebEngineView):
 		
 	def init_UI(self) :
 		#self.setGeometry(0, 0, 240, 400)
-		self.setHtml(self.html_text + '</body></html>')
+		self.setHtml(self.html_text + '</div></body></html>')
 		self.show()
 
 	def add_message(self, text, mark) :
@@ -31,7 +31,10 @@ class Message_Frame(QWebEngineView):
 			text = self.Bhead + text + self.Btail
 		self.messages += '\n' + text + '\n'
 		#print(self.html_text + self.messages + '</body></html>')
-		self.setHtml(self.html_text + self.messages + '</body></html>')
+		self.setHtml(self.html_text + self.messages + '</div></body></html>')
+		#self.close()
+		#self.show()
+		#print(self.html_text + self.messages + '</div></body></html>')
 		#self.reload()
 		#self.update()
 if __name__ == '__main__' :

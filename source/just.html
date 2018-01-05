@@ -1,0 +1,20 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+</head>
+<body>
+ 
+<script type="text/javascript">
+function add()
+{
+var now = new Date();
+var div = document.getElementById('scrolldIV');
+div.innerHTML = div.innerHTML + 'time_' + now.getTime() + '<br />';
+div.scrollTop = div.scrollHeight;
+}
+</script>
+<div id="scrolldIV" style="overflow:auto; height: 100px; width: 400px; border: 1px solid #999;">
+</div>
+<input type="button" value="插入一行" onclick="add();">
+用js控件div的滚动条，让它在内容更新时自动滚到底部</body>
+</html>

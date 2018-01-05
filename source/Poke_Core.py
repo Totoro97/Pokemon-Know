@@ -3,18 +3,23 @@ import os
 import math
 import Certainty_Factor as cf
 import Pokemon
+import json
 
 class Poke_Core :
 	
 	def __init__(self) :
-		self.load_data()
+		self.load_pokemon_data()
+		self.load_question_data()
+		self.cnt = 0
 	
-	def load_data(self) :
+	def load_pokemon_data(self) :
 		file_lis = os.listdir('../data')
 		self.pokemons = dict()
 		self.attr_val = dict()
 		for f_name in file_lis :
 			if f_name[-5:] != '.json' : 
+				continue
+			if f_name[0] == '_' :
 				continue
 			self.pokemons[f_name[:-5]] = Pokemon.Pokemon(f_name[:-5])
 		
@@ -27,14 +32,17 @@ class Poke_Core :
 		del_lis = ['名字', '地区']
 		for _ in del_lis :
 			self.attr_val.pop(_)
+			
+	def load_question_data(self) :
+		f = open('../data/_question_.json')
+		self.qs_data = json.loads(f.read())
+		f.close()
 		
 	def filt_pokemon(self, token) :
 		del_lis = []
 		for pokemon in self.pokemons :
-			self.pokemons[pokemon].p = self.pokemons[pokemon].new_p(self.clar_attr, self.clar_val, token == 'yes')
-			if self.pokemons[pokemon].p < 0.5 :
-				self.pokemons[pokemon].cnt += 1
-			if self.pokemons[pokemon].cnt > 2 :
+			self.pokemons[pokemon].update_p(self.clar_attr, self.clar_val, token != 'no', cf.get_ratio(token))
+			if self.pokemons[pokemon].is_out() :
 				del_lis.append(pokemon)
 		for pokemon in del_lis :
 			self.pokemons.pop(pokemon)
@@ -72,7 +80,8 @@ class Poke_Core :
 			p = pow(cf.base, new_p) / info_false
 			entr_false -= p * math.log2(p)
 		
-		ans = -(entr_true * p_true + entr_false * p_false) / (p_true + p_false) 
+		print('p_true',p_true,'p_false',p_false)
+		ans = -(entr_true * p_true + entr_false * p_false) / (p_true + p_false + 0.000001)
 		#print('attr %s, val %s, p_true %.6f p_false %.6f entro = %.6f'%(clar_attr, clar_val, p_true, p_false, ans))
 		#p_true = pow(cf.base, p_true)
 		#p_false = pow(cf.base, p_false)
@@ -89,7 +98,7 @@ class Poke_Core :
 				if (info > sing) :
 					sing = info
 					self.clar_attr = clar_attr
-					self.clar_val = clar_val	
+					self.clar_val = clar_val
 		self.attr_val[self.clar_attr].remove(self.clar_val)
 		print("entropy: ", sing)
 		#del_lis = []
@@ -100,18 +109,35 @@ class Poke_Core :
 		#	self.pokemons.pop(pokemon)	
 		for pokemon in self.pokemons :
 			print(pokemon + ':' + str(self.pokemons[pokemon].p))
-		return '它的' + self.clar_attr + '是' + self.clar_val + '吗？', [('是的','yes'), ('不是','no')]
-				
+		return self.gen_question(), [('是的','yes'), ('有点吧', 'mayb'), ('不是','no')]
+	def gen_question(self) :
+		if self.clar_attr in self.qs_data :
+			return self.qs_data[self.clar_attr][0] + str(self.clar_val) + self.qs_data[self.clar_attr][1]
+		else :
+			return '它的' + str(self.clar_attr) + '是' + str(self.clar_val) + '吗？'
+	def best_pokemon(self) :
+		p = -2
+		sing = ''
+		for pokemon in self.pokemons :
+			if (self.pokemons[pokemon].p > p) :
+				p = self.pokemons[pokemon].p
+				sing = pokemon
+		return sing
+		
 	def proc(self, token) : # ret: text, options
-		if token != 'start' :
+		self.cnt += 1
+		bg = ''
+		if token not in ['start', 'final_yes', 'final_no', 'exit'] :
 			self.filt_pokemon(token)
-		if token == 'exit' :
-			return '', []
-		if (len(self.pokemons) == 1) :
-			just = ''
-			for _ in self.pokemons :
-				just = _
-				print(_)
-			return '是不是' + str(just) + '?', [('是的', 'exit')]
-		return self.choose_question()
-			
+		elif token == 'final_no' :
+			self.pokemons.pop(self.best_pokemon())
+			bg += '...'
+		if token == 'final_yes' :
+			return 'ok,我的任务完成了', [('退出', 'exit'), ('再来一次', 'again')]
+		elif len(self.pokemons) == 0:
+			return '抱歉我好像不知道你描述的是啥……', [('退出', 'exit')]
+		elif (len(self.pokemons) == 1 or self.cnt > 8) :
+			just = self.best_pokemon()
+			return '<+img>' + just + '<+img>' + bg + '是' + str(just) + '吗?', [('感觉是的诶', 'final_yes'), ('看起来不像啊', 'final_no')]
+		else :
+			return self.choose_question()

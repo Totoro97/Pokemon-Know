@@ -8,6 +8,7 @@ class Pokemon :
 		self.load_data(name)
 		self.p = 0.0
 		self.cnt = 0
+		self.false_cnt = 0
 				
 	def load_data(self, name) :
 		f = open('../data/' + name + '.json', 'r')
@@ -51,9 +52,20 @@ class Pokemon :
 		for attr in self.data :
 			for val in self.data[attr] :
 				self.data[attr][val] /= len(self.data[attr])
-				
-	def new_p(self, attr, val, mark) :
-		p = self.belong_val(attr, val)
+	
+	def is_out(self) :
+		if self.false_cnt > 2 or (self.cnt > 5 and self.false_cnt > 1) :
+			return True
+		return False
+		
+	def update_p(self, attr, val, mark, rat = 1.0) :
+		self.p = self.new_p(attr, val, mark, rat)
+		self.cnt += 1
+		if self.p < 0.5 :
+			self.false_cnt += 1
+		
+	def new_p(self, attr, val, mark, rat = 1.0) :
+		p = self.belong_val(attr, val, rat)
 		if not mark :
 			if p < 0 :
 				p *= -0.5
@@ -63,7 +75,7 @@ class Pokemon :
 		#	print(str(p) + '+' + str(list(self.data['名字'])[0]))
 		return cf.mix(self.p, p)
 	
-	def belong_val(self, attr, val) :
+	def belong_val(self, attr, val, rat = 1.0) :
 		p = 0.0
 		if attr not in self.data :
 			p = -0.4
@@ -71,4 +83,4 @@ class Pokemon :
 			p = -0.8
 		else :
 			p = self.data[attr][val]
-		return p
+		return p * rat

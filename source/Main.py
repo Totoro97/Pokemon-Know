@@ -1,6 +1,7 @@
 import Poke_Core
 import sys, time
 import copy
+import json
 from functools import partial
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
@@ -16,6 +17,8 @@ class Main_Window(QMainWindow) :
 	
 	def __init__(self) :
 		super().__init__()
+		self.init()
+	def init(self) :
 		self.poke_core = Poke_Core.Poke_Core()
 		self.message_frame = Message_Frame.Message_Frame(self)
 		self.btn_wrapper = QWidget(self)
@@ -27,10 +30,16 @@ class Main_Window(QMainWindow) :
 		
 	
 	def init_UI(self) :
-		self.setGeometry(10, 10, 800, 700)
+		self.setWindowTitle('Pokemon-Know')
+		self.setGeometry(10, 10, 360, 565)
+		self.setStyleSheet("QMainWindow {background: #4a4a4a;}")
 		self.message_frame.setGeometry(10, 10, 340, 500)
-		self.message_frame.add_message('hello', False)
-		self.message_frame.add_message('hello', False)
+		self.message_frame.add_message('Hi,我见到了一只Pokemon', True)
+		self.message_frame.add_message('但是我不知道它到底是啥诶', True)
+		self.message_frame.add_message('你能帮帮我吗？', True)
+		self.message_frame.add_message('没问题', False)
+		self.message_frame.add_message('但是我需要问你几个问题才能判断出是哪种Pokemon', False)
+		self.message_frame.add_message('好的', True)
 		self.btn_wrapper.setGeometry(10, 520, 340, 35)
 		#self.btn_1.setGeometry(0, 0, 340, 35)
 		self.show()
@@ -50,6 +59,7 @@ class Main_Window(QMainWindow) :
 			#tmp = copy.copy(_)
 			sing.clicked.connect(partial(self.proc_ans, _))
 			sing.setGeometry(5 + index * width, 0, width - 5, 35)
+			sing.setStyleSheet("background: #303030; color: #FFFFFF; font-size: 15px")
 			sing.show()
 			self.btn_pool.append(sing)
 			
@@ -58,9 +68,25 @@ class Main_Window(QMainWindow) :
 			
 	def proc_ans(self, Ans) :
 		Ans, ans = Ans
+		if (ans == 'exit') :
+			self.close()
+			return
+		if (ans == 'again') :
+			self.init()
+			return
 		self.message_frame.add_message(Ans, True)
 		text, options = self.poke_core.proc(ans)
+		flg = False
+		if (text[:6] == '<+img>') :
+			pokemon, text = text[6:].split('<+img>')
+			flg = True
 		self.message_frame.add_message(text, False)
+		if flg :
+			f = open('../data/_poke_pic_url_.json', 'r')
+			data = json.loads(f.read())
+			f.close()
+			url = 'https:' + data[pokemon]
+			self.message_frame.add_message('<img src=\"%s\" width=\"200\" height=\"200\">'%url, False)
 		if (len(options) == 0) :
 			self.close()
 			exit()

@@ -1,0 +1,88 @@
+<html>
+<style>
+.bubbleDiv{  
+    width: 400px;  
+    margin: 0 auto;  
+    height: 800px;  
+    border: 1px solid #4a4f58;  
+}
+.bubbleItem{  
+    width: 100%;  
+    font-size: 15px;
+}  
+.bubble{  
+    max-width: 655px;  
+    position: relative;  
+    line-height: 30px;  
+    padding-left: 10px;  
+    padding-top: 3px;  
+    padding-bottom: 3px;  
+    border-radius: 7px;  
+    margin-top: 15px;  
+    padding-right: 10px;  
+    display: inline-block;  
+}  
+.leftBubble{  
+    position: relative;  
+    margin-left: 25px;  
+    margin-right: 25px;
+    border: 1px solid #00b6b6;  
+    background-color: #f8fdfc;  
+}  
+.leftBubble .bottomLevel{  
+    position: absolute;  
+    top: 10px;  
+    left: -10px;  
+    border-top: 10px solid #00b6b6;  
+    border-left: 10px solid transparent;  
+}  
+.leftBubble .topLevel{  
+    position: absolute;  
+    top: 11px;  
+    left: -8px;  
+    border-top: 10px solid #f8fdfc;  
+    border-left: 10px solid transparent;  
+    z-index: 100;  
+}  
+.rightBubble{  
+    position: relative; 
+    margin-left: 25px; 
+    margin-right: 25px;  
+    float: right;  
+    border: 1px solid #aaa; 
+    background-color: #f8fdfc;   
+}  
+.rightBubble .bottomLevel{  
+    position: absolute;  
+    bottom: 11px;  
+    right: -10px;  
+    border-bottom: 10px solid #aaa;  
+    border-right: 10px solid transparent;  
+}  
+.rightBubble .topLevel{  
+    position: absolute;  
+    bottom: 12px;  
+    right: -8px;  
+    border-bottom: 10px solid #fff;  
+    border-right: 10px solid transparent;  
+    z-index: 100;  
+}  
+.clearfix:after {  
+    visibility: hidden;  
+    display: block;  
+    font-size: 0;  
+    content: " ";  
+    clear: both;  
+    height: 0;  
+}  
+</style>
+<script type="text/javascript">
+window.onload = function(){
+	var div = document.getElementById('scrolld');
+	div.scrollTop = div.scrollHeight;
+};
+</script>
+<body style="width: 310px; font-family:Arial,Verdana,Sans-serif; background-color: #404040">
+<div id="scrolld" style="overflow:hidden; height: 100%; width: 320px;">
+<!--<div class="bubbleDiv" style="width: 200px">-->
+

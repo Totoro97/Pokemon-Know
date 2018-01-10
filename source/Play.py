@@ -8,7 +8,7 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWebEngineWidgets import QWebEngineView
 
-import Message_Frame, Poke_Core, Poke_List, Log_Frame
+import Message_Frame, Poke_Core, Log_Frame
 #poke_core = Poke_Core.Poke_Core
 
 ans = 'start'
@@ -18,26 +18,23 @@ class Main_Window(QMainWindow) :
 	def __init__(self) :
 		super().__init__()
 		self.init()
-		
 	def init(self) :
 		self.poke_core = Poke_Core.Poke_Core(self)
-		self.message_frame = Message_Frame.Message_Frame(self)
-		self.poke_list = Poke_List.Poke_List(self)
 		self.log_frame = Log_Frame.Log_Frame(self)
+		self.message_frame = Message_Frame.Message_Frame(self)
 		self.btn_wrapper = QWidget(self)
 		#self.btn_1 = QPushButton('开始', self.btn_wrapper)
 		#self.btn_1.clicked.connect(lambda: self.proc_ans('start'))
 		self.init_UI()
-		self.update_poke_list()
 		self.btn_pool = []
 		self.gen_btns([('开始','start')])
-			
+		
+	
 	def init_UI(self) :
 		self.setWindowTitle('Pokemon-Know')
-		self.setGeometry(10, 10, 715, 565)
+		self.setGeometry(10, 10, 360, 565)
 		self.setStyleSheet("QMainWindow {background: #4a4a4a;}")
-		self.poke_list.setGeometry(360, 10, 340, 265)
-		self.log_frame.setGeometry(360, 285, 340, 265)
+		self.log_frame.setGeometry(0, 0, 0, 0)
 		self.message_frame.setGeometry(10, 10, 340, 500)
 		self.message_frame.add_message('Hi,我见到了一只Pokemon', True)
 		self.message_frame.add_message('但是我不知道它到底是啥诶', True)
@@ -95,16 +92,8 @@ class Main_Window(QMainWindow) :
 		if (len(options) == 0) :
 			self.close()
 			exit()
-		self.update_poke_list()
 		self.gen_btns(options)
-		
-	def update_poke_list(self) :
-		poke = []
-		for pokemon in self.poke_core.pokemons :
-			poke.append((self.poke_core.pokemons[pokemon].p, pokemon))
-		poke.sort(reverse=True)
-		self.poke_list.refresh(poke)
-		
+
 app = QApplication(sys.argv)
 main_window = Main_Window()
 app.exec_()

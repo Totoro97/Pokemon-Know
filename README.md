@@ -2,7 +2,9 @@
 
 An expert system that helps you know Pokemons
 
-微软小冰读心术的pokemon版本，能猜的pokemon列表见data文件夹，目前49只
+人工智能A课程项目，项目报告见[这里](https://github.com/Totoro97/Pokemon-Know/tree/master/report.md)
+
+微软小冰读心术的pokemon版本，能猜的pokemon列表见data文件夹，目前59只
 
 依赖PyQt5
 

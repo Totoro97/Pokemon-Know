@@ -7,9 +7,10 @@ import json
 
 class Poke_Core :
 	
-	def __init__(self) :
+	def __init__(self, father) :
 		self.load_pokemon_data()
 		self.load_question_data()
+		self.father = father
 		self.cnt = 0
 	
 	def load_pokemon_data(self) :
@@ -44,6 +45,7 @@ class Poke_Core :
 			self.pokemons[pokemon].update_p(self.clar_attr, self.clar_val, token != 'no', cf.get_ratio(token))
 			if self.pokemons[pokemon].is_out() :
 				del_lis.append(pokemon)
+				self.father.log_frame.add_message(pokemon + ' is out')
 		for pokemon in del_lis :
 			self.pokemons.pop(pokemon)
 			
